@@ -21,6 +21,8 @@ services:
       - "8080:8080"
     depends_on:
       - traffic-postgresql
+    env_file:
+      - ./api-server/.docker-env 
     networks:
       - traffic-network
 

@@ -1,0 +1,6 @@
+APPLICATION_PORT=8080
+DB_HOST=traffic-postgresql
+DB_NAME=traffic
+DB_PASSWORD=StrongAdminP@ssw0rd
+DB_PORT=5432
+DB_USER=postgres
