@@ -2,23 +2,33 @@ version: '3.9'
 
 services:
 
-  server:
-    image: 'challenge-1.0.0.jar'
-    ports:
-      - "8080:8080"
-    depends_on:
-      - db
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=challenge
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-
-  db:
-    image: postgres:13
+  traffic-postgresql:
+    build: ./docker-postgresql
+    container_name: traffic-postgresql
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_PASSWORD=challenge
+      - POSTGRES_PASSWORD=StrongAdminP@ssw0rd
       - POSTGRES_USER=postgres
       - POSTGRES_DB=postgres
+    networks:
+          - traffic-network
+
+  traffic-api-server:
+    build: ./api-server
+    container_name: traffic-api-server
+    ports:
+      - "8080:8080"
+    depends_on:
+      - traffic-postgresql
+    networks:
+      - traffic-network
+
+networks:
+  traffic-network:
+    driver: bridge
+
+  
+    
+ 
+
