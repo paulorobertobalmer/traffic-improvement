@@ -26,6 +26,19 @@ services:
     networks:
       - traffic-network
 
+  traffic-bucket:
+    image: minio/minio
+    container_name: traffic-bucket
+    ports:
+      - "9000:9000"
+    environment:
+      MINIO_ACCESS_KEY: your_access_key
+      MINIO_SECRET_KEY: your_secret_key
+    volumes:
+      - /path/to/data:/data
+    networks:
+      - traffic-network
+
 networks:
   traffic-network:
     driver: bridge
