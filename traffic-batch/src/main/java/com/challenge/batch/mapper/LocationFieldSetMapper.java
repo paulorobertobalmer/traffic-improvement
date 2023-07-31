@@ -18,6 +18,8 @@ public class LocationFieldSetMapper implements FieldSetMapper<Location> {
                 fieldSet.readString("Borough"),
                 fieldSet.readString("Zone"),
                 fieldSet.readString("service_zone"),
+                0,
+                0,
                 Timestamp.from(Calendar.getInstance().toInstant())
         );
         return location;

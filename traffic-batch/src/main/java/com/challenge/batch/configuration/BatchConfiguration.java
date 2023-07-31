@@ -9,6 +9,7 @@ import com.challenge.batch.processor.TaxiTripProcessor;
 import com.challenge.common.entity.Location;
 import com.challenge.common.entity.TaxiTrip;
 import org.springframework.batch.core.Job;
+import java.util.Arrays;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -23,9 +24,12 @@ import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.batch.item.support.CompositeItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.FileSystemResource;
 
 import javax.sql.DataSource;
@@ -78,8 +82,8 @@ public class BatchConfiguration {
         return new JdbcBatchItemWriterBuilder<Location>()
                 .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
                 .sql("INSERT INTO location " +
-                        "(id, borough, zone_name, service_zone, created_at) " +
-                        "VALUES(:id, :borough, :zoneName, :serviceZone, :createdAt) ")
+                        "(id, borough, zone_name, service_zone, pickup_quantity, drop_off_quantity, created_at) " +
+                        "VALUES(:id, :borough, :zoneName, :serviceZone, 0, 0, :createdAt) ")
                 .dataSource(dataSource)
                 .build();
     }
@@ -155,14 +159,36 @@ public class BatchConfiguration {
         return new TaxiTripProcessor();
     }
 
-    @Bean
+    @Bean("updateLocationWriter")
+    public JdbcBatchItemWriter<TaxiTrip> updateLocationWriter(DataSource dataSource) {
+        return new JdbcBatchItemWriterBuilder<TaxiTrip>()
+                .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
+                .sql("UPDATE location\n" +
+                        "SET drop_off_quantity = \n" +
+                        "    CASE\n" +
+                        "        WHEN id = :dropOffLocationId THEN drop_off_quantity + 1\n" +
+                        "        ELSE drop_off_quantity\n" +
+                        "    END,\n" +
+                        "    pickup_quantity = \n" +
+                        "    CASE\n" +
+                        "        WHEN id = :pickupLocationId THEN pickup_quantity + 1\n" +
+                        "        ELSE pickup_quantity\n" +
+                        "    END\n" +
+                        "WHERE id IN (:dropOffLocationId, :pickupLocationId)")
+                .dataSource(dataSource)
+                .build();
+    }
+
+    @Bean("taxiTripWriter")
+    @Primary
     public JdbcBatchItemWriter<TaxiTrip> taxiTripWriter(final DataSource dataSource) {
+
         return new JdbcBatchItemWriterBuilder<TaxiTrip>()
                 .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
                 .sql("INSERT INTO taxi_trip " +
                         "(pickup_datetime, drop_off_datetime, pickup_location_id, " +
                         "drop_off_location_id, created_at) " +
-                        "VALUES(:pickupDatetime, :dropOffDatetime, :pickupLocationId, :dropOffLocationId, :createdAt);\n ")
+                        "VALUES(:pickupDatetime, :dropOffDatetime, :pickupLocationId, :dropOffLocationId, :createdAt); ")
                 .dataSource(dataSource)
                 .build();
     }
@@ -178,22 +204,31 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Step stepTripsGreen(JdbcBatchItemWriter<TaxiTrip> writer) {
+    public Step stepTripsGreen(@Qualifier("taxiTripWriter") JdbcBatchItemWriter<TaxiTrip> taxiTripWriter,
+                               @Qualifier("updateLocationWriter") JdbcBatchItemWriter<TaxiTrip> updateLocationWriter) {
+
+        CompositeItemWriter<TaxiTrip> compositeWriter = new CompositeItemWriter<>();
+        compositeWriter.setDelegates(Arrays.asList(taxiTripWriter, updateLocationWriter));
+
         return stepBuilderFactory.get("stepTripsGreen")
-                .<TaxiTrip, TaxiTrip>chunk(2000)
+                .<TaxiTrip, TaxiTrip>chunk(20000000)
                 .reader(taxiTripGreenReader())
                 .processor(taxiTripProcessor())
-                .writer(writer)
+                .writer(compositeWriter)
                 .build();
     }
 
     @Bean
-    public Step stepTripsYellow(JdbcBatchItemWriter<TaxiTrip> writer) {
+    public Step stepTripsYellow(@Qualifier("taxiTripWriter") JdbcBatchItemWriter<TaxiTrip> taxiTripWriter,
+                                @Qualifier("updateLocationWriter") JdbcBatchItemWriter<TaxiTrip> updateLocationWriter) {
+        CompositeItemWriter<TaxiTrip> compositeWriter = new CompositeItemWriter<>();
+        compositeWriter.setDelegates(Arrays.asList(taxiTripWriter, updateLocationWriter));
+
         return stepBuilderFactory.get("stepTripsYellow")
-                .<TaxiTrip, TaxiTrip>chunk(2000)
+                .<TaxiTrip, TaxiTrip>chunk(20000000)
                 .reader(taxiTripYellowReader())
                 .processor(taxiTripProcessor())
-                .writer(writer)
+                .writer(compositeWriter)
                 .build();
     }
 

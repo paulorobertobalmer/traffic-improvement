@@ -3,6 +3,8 @@ CREATE TABLE location (
     borough varchar(200) NOT NULL,
     zone_name varchar(200) NOT NULL,
     service_zone varchar(200) NOT NULL,
+    pickup_quantity integer NOT NULL,
+    drop_off_quantity integer NOT NULL,
     created_at timestamp NOT NULL,
 	CONSTRAINT location_pkey PRIMARY KEY (id)
 );

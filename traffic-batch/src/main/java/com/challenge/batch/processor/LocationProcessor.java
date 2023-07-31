@@ -18,7 +18,7 @@ public class LocationProcessor implements ItemProcessor<Location, Location>{
 
     @Override
     public Location process(Location location) throws Exception {
-        if (locationExists(location.id())) {
+        if (locationExists(location.getId())) {
             return null;
         }
         return location;
