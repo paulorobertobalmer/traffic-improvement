@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "location")
-public record Location(
+public record Location (
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         Integer id,

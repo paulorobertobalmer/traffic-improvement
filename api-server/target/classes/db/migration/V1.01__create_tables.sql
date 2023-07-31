@@ -8,13 +8,12 @@ CREATE TABLE location (
 );
 
 CREATE TABLE taxi_trip (
-	id integer NOT NULL,
+	id serial PRIMARY KEY,
     pickup_datetime timestamp NOT NULL,
     drop_off_datetime  timestamp NOT NULL,
 	pickup_location_id integer NOT NULL,
 	drop_off_location_id integer NOT NULL,
-    created_at timestamp NOT NULL,
-	CONSTRAINT taxi_trip_pkey PRIMARY KEY (id)
+    created_at timestamp NOT NULL
 );
 
 ALTER TABLE ONLY taxi_trip

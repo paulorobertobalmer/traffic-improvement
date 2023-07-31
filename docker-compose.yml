@@ -31,17 +31,21 @@ services:
     container_name: traffic-bucket
     ports:
       - "9000:9000"
-    environment:
-      MINIO_ACCESS_KEY: your_access_key
-      MINIO_SECRET_KEY: your_secret_key
+      - "9001:9001"
+    environment: 
+      MINIO_ACCESS_KEY: key12345
+      MINIO_SECRET_KEY: pwd12345
+    volumes:
+      - bucket-data:/data
     networks:
       - traffic-network
+    command: server /data --console-address ":9001"
+
+volumes:
+  bucket-data:
 
 networks:
   traffic-network:
     driver: bridge
 
   
-    
- 
-
