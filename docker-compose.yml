@@ -26,23 +26,19 @@ services:
     networks:
       - traffic-network
 
-  traffic-bucket:
-    image: minio/minio
-    container_name: traffic-bucket
+  traffic-batch:
+    build: ./traffic-batch
+    container_name: traffic-batch
     ports:
-      - "9000:9000"
-      - "9001:9001"
-    environment: 
-      MINIO_ACCESS_KEY: key12345
-      MINIO_SECRET_KEY: pwd12345
+      - "8081:8080"
+    depends_on:
+      - traffic-postgresql
     volumes:
-      - bucket-data:/data
+      - ./data-processing/files:/app
+    env_file:
+      - ./traffic-batch/.docker-env 
     networks:
-      - traffic-network
-    command: server /data --console-address ":9001"
-
-volumes:
-  bucket-data:
+      - traffic-network    
 
 networks:
   traffic-network:

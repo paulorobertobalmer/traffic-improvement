@@ -4,13 +4,14 @@ spring:
     url: jdbc:postgresql://${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}
     username:  ${env.DB_USER}
     password : ${env.DB_PASSWORD}
-
+  jpa:
+    database: postgresql
   batch:
     jdbc:
       initialize-schema: always
 
 server:
-  port: ${env.APPLICATION_PORT}
+  port: 8080
 
 bucket:
   name: ${env.BUCKET_NAME}

@@ -1,0 +1,92 @@
+{
+	"info": {
+		"_postman_id": "1ccfd0c0-258c-4f53-8ce4-bacd127989a1",
+		"name": "Challange",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25719118"
+	},
+	"item": [
+		{
+			"name": "Zones - Order by Pickup",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/challenge/top-zones?order=pickups",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"challenge",
+						"top-zones"
+					],
+					"query": [
+						{
+							"key": "order",
+							"value": "pickups"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Zones - Order by Dropff",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/challenge/top-zones?order=dropoffs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"challenge",
+						"top-zones"
+					],
+					"query": [
+						{
+							"key": "order",
+							"value": "dropoffs"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Zone Trip Info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/challenge/zone-trips?zone=74&date=2023-01-01",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"challenge",
+						"zone-trips"
+					],
+					"query": [
+						{
+							"key": "zone",
+							"value": "74"
+						},
+						{
+							"key": "date",
+							"value": "2023-01-01"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

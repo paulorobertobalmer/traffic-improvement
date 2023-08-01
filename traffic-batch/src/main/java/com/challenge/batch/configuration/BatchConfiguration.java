@@ -48,7 +48,7 @@ public class BatchConfiguration {
     public FlatFileItemReader<Location> locationReader() {
         return new FlatFileItemReaderBuilder<Location>()
                 .name("locationItemReader")
-                .resource(new FileSystemResource("/home/paulo/manual-da-programacao/projetos/traffic-data/zone.csv"))
+                .resource(new FileSystemResource("/app/zone.csv"))
                 .delimited()
                 .names(new String[]{"LocationID", "Borough", "Zone", "service_zone"})
                 .linesToSkip(1)
@@ -92,7 +92,7 @@ public class BatchConfiguration {
     public FlatFileItemReader<TaxiTrip> taxiTripGreenReader() {
         return new FlatFileItemReaderBuilder<TaxiTrip>()
                 .name("taxiTripItemReaderGreen")
-                .resource(new FileSystemResource("/home/paulo/manual-da-programacao/projetos/traffic-data/green.csv"))
+                .resource(new FileSystemResource("/app/green.csv"))
                 .delimited()
                 .names(new String[]{"Id", "VendorID", "lpep_pickup_datetime", "lpep_dropoff_datetime", "store_and_fwd_flag",
                         "RatecodeID", "PULocationID", "DOLocationID", "passenger_count", "trip_distance", "fare_amount", "extra", "mta_tax", "tip_amount",
@@ -109,7 +109,7 @@ public class BatchConfiguration {
     public FlatFileItemReader<TaxiTrip> taxiTripYellowReader() {
         return new FlatFileItemReaderBuilder<TaxiTrip>()
                 .name("taxiTripItemReaderYellow")
-                .resource(new FileSystemResource("/home/paulo/manual-da-programacao/projetos/traffic-data/yellow.csv"))
+                .resource(new FileSystemResource("/app/yellow.csv"))
                 .delimited()
                 .names(new String[]{"Id", "VendorID", "tpep_pickup_datetime", "tpep_dropoff_datetime", "passenger_count", "trip_distance", "RatecodeID",
                         "store_and_fwd_flag", "PULocationID", "DOLocationID", "payment_type", "fare_amount", "extra", "mta_tax", "tip_amount", "tolls_amount",
